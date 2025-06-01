@@ -1,10 +1,24 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+
 const cards = ref([]);
 const cards_opened = ref([]);
 let card_count = ref(16);
 let is_play = ref(0); //0=ไม่เล่น 1=เล่น
+const production_image_path = import.meta.env.VITE_REPOSITORY_NAME;
+const images = ref({});
+
+onMounted(() => {
+  Array.from({ length: 9 }).forEach((_, index) => {
+    images.value[index + 1] = new Image();
+    images.value[index + 1].src = `${
+      production_image_path ? "/" + production_image_path : ""
+    }/pictures/${index + 1}.png`;
+  });
+});
+
 function startGame() {
+  card_count.value = 16;
   cards.value = [];
   cards_opened.value = [];
   is_play.value = 1;
@@ -23,6 +37,7 @@ function startGame() {
     [cards.value[i], cards.value[j]] = [cards.value[j], cards.value[i]];
   }
 }
+
 function handleClick(card) {
   if (cards_opened.value.length < 2) {
     card.status = 1;
@@ -77,20 +92,18 @@ function checkCard() {
         <img
           class="w-[140px] rounded-2xl cursor-pointer"
           v-if="card.status === 0"
-          src="/pictures/1.png"
+          :src="images[1].src"
           @click="handleClick(card)"
+          draggable="false"
         />
         <img
-          v-if="card.status === 1"
-          :src="`/pictures/${card.index + 1}.png`"
+          v-else
+          :src="images[card.index + 1].src"
           :alt="`Card ${card.index + 1}`"
-          class="w-[140px] rounded-2xl cursor-pointer border-2"
-        />
-        <img
-          v-if="card.status === 2"
-          :src="`/pictures/${card.index + 1}.png`"
-          :alt="`Card ${card.index + 1}`"
-          class="w-[140px] rounded-2xl cursor-not-allowed border-2 opacity-70 saturate-0"
+          :class="`w-[140px] rounded-2xl cursor-pointer border-2 ${
+            card.status === 2 ? 'opacity-70 saturate-0' : ''
+          }`"
+          draggable="false"
         />
       </div>
     </div>
