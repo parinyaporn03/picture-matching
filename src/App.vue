@@ -92,7 +92,6 @@ function checkCard() {
           :alt="`Card ${card.index + 1}`"
           class="w-[140px] rounded-2xl cursor-not-allowed border-2 opacity-70 saturate-0"
         />
-        <div>{{ card.index }}</div>
       </div>
     </div>
   </div>
